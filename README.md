@@ -1,11 +1,5 @@
 ﻿
 # PCO212 Metaheuristics - Walkability + Metaheuristics Pipeline
-
-> **Versão integrada (main + ILS/GRASP):** consulte [INTEGRACAO.md](INTEGRACAO.md)
-> para instalação, os quatro modos do menu, arquivos preservados e validação.
-> ILS/GRASP estão implementados; PSO/BRKGA e a avaliação numérica foram
-> preservados da main. Os modos 3 (lote) e 4 (mapas) também estão disponíveis.
-
   
 
 ## Overview
