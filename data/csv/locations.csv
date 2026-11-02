@@ -1,0 +1,6 @@
+key_location;address;location;coordinates;dem_file
+av_paulista;Av. Brigadeiro Luís Antônio, 633 - Jardim Paulista, São Paulo - SP;BK Avenida Paulista;(-23.5659512,-46.6557966);data/dem/avpaulista.tif
+metro_ana_rosa;Vila Mariana, São Paulo - SP, 04010-100;Estação Ana Rosa;(-23.5830689,-46.6369578);data/dem/anarosa.tif
+itajuba_centro;Praça Teodomiro Santiago;Centro - Itajubá;(-22.4242544,-45.455196);data/dem/praca_teodomiro.tif
+milao_italia;Piazza del Duomo, 20122 Milano MI, Itália;Catedral de Milão (Duomo di Milano);(45.4642,9.1915);data/dem/catedral_milao.tif
+shinjuku_toquio;Shinjuku Gyoen, Tóquio;Tóquio;(35.6905, 139.7003);data/dem/shinjuku.tif

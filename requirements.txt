@@ -1,0 +1,10 @@
+matplotlib==3.10.5
+networkx==3.5
+numpy==2.3.2
+pandas==2.3.2
+shapely==2.1.1
+geopandas==1.1.1
+osmnx==2.0.6
+h3==4.3.1
+rasterio==1.4.3
+scipy==1.16.0

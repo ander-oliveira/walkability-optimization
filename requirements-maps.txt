@@ -1,0 +1,3 @@
+# Optional classified heatmaps (NaturalBreaks, Quantiles and EqualInterval).
+-r requirements.txt
+mapclassify==2.11.0
