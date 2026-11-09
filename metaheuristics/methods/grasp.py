@@ -9,6 +9,9 @@ Design notes for this problem:
   The budget is therefore the number of construction steps (one POI per step),
   so every constructed solution has exactly ``budget`` POIs, matching the ILS
   solution space and its budget-conservation invariant.
+- Binary mode (default, GRASP_BINARY_ALLOCATION=1): a pair already chosen leaves
+  the candidate list, so each pair receives at most one new POI (SBPO 2026,
+  Eq. 7f). GRASP_BINARY_ALLOCATION=0 reproduces the earlier integer runs.
 - The objective ``sum(IQC)`` is global/non-separable (CRITIC re-normalizes over
   the whole matrix), so there is no cheap exact incremental cost. The
   construction uses a fast, fully vectorized *surrogate* greedy score
@@ -49,6 +52,7 @@ from .debug_nd_io import save_nd_debug_matrices
 from .ils import (
     _build_dataset_tag,
     _candidate_matrix_to_allocation_items,
+    _check_allocation_feasible,
     _determine_stopping_reason,
     _evaluate_candidate_matrix,
     _resolve_allowed_source_rows,
@@ -76,6 +80,7 @@ class GRASPRuntimeConfig:
     log_every_iterations: int = 10
     log_only_improvements: bool = False
     seed_parallel_workers: int = 1
+    binary_allocation: bool = True       # at most one new POI per (hexagon, dimension)
 
 
 # --------------------------------------------------------------------------- #
@@ -136,7 +141,8 @@ def _greedy_randomized_construction(objective_state: ObjectiveStateND,
                                     allowed_source_rows: np.ndarray,
                                     budget: int,
                                     alpha: float,
-                                    range_epsilon: float) -> Tuple[np.ndarray, float]:
+                                    range_epsilon: float,
+                                    binary_allocation: bool = False) -> Tuple[np.ndarray, float]:
     """Build one solution with the GRASP greedy randomized construction (Fig. 6).
 
     Returns the candidate matrix and the mean RCL size over the construction steps.
@@ -164,10 +170,22 @@ def _greedy_randomized_construction(objective_state: ObjectiveStateND,
         # Separable surrogate greedy score over (allowed source row, dimension).
         score_grid = reach_allowed[:, None] * col_factor[None, :]  # (n_allowed, n_dims)
 
-        score_max = float(score_grid.max())
-        score_min = float(score_grid.min())
+        if binary_allocation:
+            # Only pairs without a new POI yet are candidates.
+            available = candidate_matrix[allowed_rows, :] < 1.0
+            if not available.any():
+                raise ValueError("GRASP: no free (hexagon, dimension) pair left for binary allocation.")
+            available_scores = score_grid[available]
+            score_max = float(available_scores.max())
+            score_min = float(available_scores.min())
+        else:
+            available = None
+            score_max = float(score_grid.max())
+            score_min = float(score_grid.min())
         threshold = score_max - alpha * (score_max - score_min)
         rcl_mask = score_grid >= (threshold - 1e-15)
+        if available is not None:
+            rcl_mask &= available
         rcl_positions = np.argwhere(rcl_mask)
         rcl_sizes.append(int(rcl_positions.shape[0]))
 
@@ -502,6 +520,7 @@ def _run_single_seed_grasp(seed_value: int,
             budget=budget,
             alpha=alpha,
             range_epsilon=config.range_epsilon,
+            binary_allocation=config.binary_allocation,
         )
         construction_elapsed = float(perf_counter() - construction_start)
         profiling_totals["construction_total_s"] += construction_elapsed
@@ -535,7 +554,9 @@ def _run_single_seed_grasp(seed_value: int,
             allowed_source_rows=allowed_source_rows,
             objective_epsilon=config.objective_epsilon,
             preserve_dimension=True,
+            binary_allocation=config.binary_allocation,
         )
+        _check_allocation_feasible(candidate_matrix, int(budget), config.binary_allocation, "GRASP after local search")
         local_search_elapsed = float(perf_counter() - local_search_start)
         after_ls_objective_value = float(local_search_result["objective_value"])
         evaluations += int(local_search_result["total_evaluations"])
@@ -750,6 +771,7 @@ def run_grasp(context: MetaheuristicContext) -> dict:
         log_every_iterations=max(1, int(os.getenv("GRASP_LOG_EVERY", "10"))),
         log_only_improvements=os.getenv("GRASP_LOG_ONLY_IMPROVEMENTS", "0") == "1",
         seed_parallel_workers=seed_parallel_workers,
+        binary_allocation=os.getenv("GRASP_BINARY_ALLOCATION", "1") != "0",
     )
     objective_state = context.objective_state_nd
     surrogate = _build_construction_surrogate(objective_state)
@@ -776,6 +798,7 @@ def run_grasp(context: MetaheuristicContext) -> dict:
                 budget=int(context.budget),
                 alpha=min(1.0, max(0.0, debug_alpha)),
                 range_epsilon=config.range_epsilon,
+                binary_allocation=config.binary_allocation,
             )
             save_nd_debug_matrices(context=context, seed=seed_value, candidate_matrix=debug_candidate)
 

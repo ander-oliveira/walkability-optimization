@@ -1,0 +1,16 @@
+\begin{table*}[t]
+\centering
+\caption{ANOVA de efeitos mistos sobre o RPD (método fixo, instância aleatória, 100 réplicas); o efeito de método é testado contra a interação método $\times$ instância.}
+\label{tab:mixedanova}
+\footnotesize
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+Fonte & gl & QM & $F$ & $p$ \\
+\midrule
+Método (fixo) & 3 & 18229,505 & 11,63 & $1,1\times10^{-5}$ \\
+Instância (aleatório) & 14 & 10789,549 & 6,88 & $5,1\times10^{-7}$ \\
+Método $\times$ instância & 42 & 1567,961 & 1508,99 & $<10^{-16}$ \\
+Erro (execuções) & 5940 & 1,039 & -- & -- \\
+\bottomrule
+\end{tabular}
+\end{table*}

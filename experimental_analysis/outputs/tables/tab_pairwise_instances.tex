@@ -1,0 +1,18 @@
+\begin{table*}[t]
+\centering
+\caption{Comparações pareadas sobre as 15 instâncias (RPD médio): vitórias/empates/derrotas, teste do sinal e teste de Wilcoxon com ajuste de Holm.}
+\label{tab:pairwise}
+\footnotesize
+\begin{tabular}{@{}lrrrrr@{}}
+\toprule
+Par (A vs B) & V/E/D de A & $p$ sinal & $R^+$ / $R^-$ & $p$ Wilcoxon & $p$ Holm \\
+\midrule
+ILS vs GRASP & 4/0/11 & 0,1185 & 38,0 / 82,0 & 0,2293 & 0,4586 \\
+ILS vs BRKGA & 0/0/15 & $6,1\times10^{-5}$ & 0,0 / 120,0 & $6,1\times10^{-5}$ & 0,0004 \\
+ILS vs PSO & 0/0/15 & $6,1\times10^{-5}$ & 0,0 / 120,0 & $6,1\times10^{-5}$ & 0,0004 \\
+GRASP vs BRKGA & 6/0/9 & 0,6072 & 45,0 / 75,0 & 0,4212 & 0,4586 \\
+GRASP vs PSO & 1/0/14 & 0,0010 & 1,0 / 119,0 & 0,0001 & 0,0004 \\
+BRKGA vs PSO & 0/0/15 & $6,1\times10^{-5}$ & 0,0 / 120,0 & $6,1\times10^{-5}$ & 0,0004 \\
+\bottomrule
+\end{tabular}
+\end{table*}

@@ -1,0 +1,5 @@
+algorithm,fallibility_max_minus_min_mean_rpd,worst_instance_mean_rpd,best_instance_mean_rpd,applicability_instances_mean_rpd_le_1,applicability_instances_mean_rpd_le_2,applicability_instances_mean_rpd_le_5
+ILS,23.410347456908635,25.10147247256256,1.6911250156539226,0,2,4
+GRASP,28.77586394533738,29.30975063102906,0.5338866856916801,1,3,9
+BRKGA,10.50879605110024,11.66534889800257,1.1565528469023287,0,2,9
+PSO,5.019087713953988,5.165828755004238,0.14674104105025013,7,12,14

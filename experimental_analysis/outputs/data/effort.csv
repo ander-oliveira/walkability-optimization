@@ -1,0 +1,61 @@
+algorithm,location,profile,evaluations_mean,evaluations_min,evaluations_max,evaluations_source,mean_runtime_s_reported
+ILS,av_paulista,athlete,29836.37,22344.0,30471.0,measured (run_metrics),78.23227587430003
+ILS,av_paulista,average_adult,29793.28,25075.0,30356.0,measured (run_metrics),54.341272932560024
+ILS,av_paulista,elderly,29931.74,25477.0,30351.0,measured (run_metrics),36.868730241630004
+ILS,itajuba_centro,athlete,25653.55,15810.0,30246.0,measured (run_metrics),54.73242588161997
+ILS,itajuba_centro,average_adult,26718.85,15148.0,30249.0,measured (run_metrics),40.999649189640024
+ILS,itajuba_centro,elderly,27911.45,19105.0,30341.0,measured (run_metrics),31.809847778539993
+ILS,metro_ana_rosa,athlete,29722.11,20006.0,30359.0,measured (run_metrics),76.89025420338
+ILS,metro_ana_rosa,average_adult,29147.39,20686.0,30472.0,measured (run_metrics),52.44368042432001
+ILS,metro_ana_rosa,elderly,29813.77,24100.0,30467.0,measured (run_metrics),36.6494618235
+ILS,milao_italia,athlete,29887.28,24549.0,30393.0,measured (run_metrics),102.63153935562
+ILS,milao_italia,average_adult,30075.76,24577.0,30342.0,measured (run_metrics),72.75856825017996
+ILS,milao_italia,elderly,30055.98,24034.0,30399.0,measured (run_metrics),45.15513938275
+ILS,shinjuku_toquio,athlete,29362.34,20155.0,30359.0,measured (run_metrics),98.81661723747997
+ILS,shinjuku_toquio,average_adult,29521.88,22707.0,30350.0,measured (run_metrics),69.27135352694002
+ILS,shinjuku_toquio,elderly,29893.21,22913.0,30438.0,measured (run_metrics),44.21327820470004
+GRASP,av_paulista,athlete,9052.29,5251.0,18425.0,measured (run_metrics),26.291341742700034
+GRASP,av_paulista,average_adult,8419.57,4640.0,20203.0,measured (run_metrics),17.034745358960034
+GRASP,av_paulista,elderly,9112.39,4960.0,22501.0,measured (run_metrics),13.025664370460008
+GRASP,itajuba_centro,athlete,8321.75,4692.0,18326.0,measured (run_metrics),19.873849340240003
+GRASP,itajuba_centro,average_adult,10475.0,5890.0,20639.0,measured (run_metrics),18.698947497299997
+GRASP,itajuba_centro,elderly,10341.27,5940.0,20709.0,measured (run_metrics),13.656530107339986
+GRASP,metro_ana_rosa,athlete,11668.78,6169.0,23364.0,measured (run_metrics),32.31967131593
+GRASP,metro_ana_rosa,average_adult,10112.23,5612.0,24289.0,measured (run_metrics),20.943972558590012
+GRASP,metro_ana_rosa,elderly,10080.7,5321.0,20051.0,measured (run_metrics),14.891221537300007
+GRASP,milao_italia,athlete,8621.01,4917.0,18511.0,measured (run_metrics),31.76021226422995
+GRASP,milao_italia,average_adult,9746.54,5598.0,18649.0,measured (run_metrics),25.343811416700035
+GRASP,milao_italia,elderly,9431.75,5135.0,23272.0,measured (run_metrics),16.16684793423001
+GRASP,shinjuku_toquio,athlete,7773.25,4463.0,14987.0,measured (run_metrics),28.106227435460024
+GRASP,shinjuku_toquio,average_adult,9248.05,5039.0,17412.0,measured (run_metrics),23.48286354716005
+GRASP,shinjuku_toquio,elderly,11008.69,6032.0,24772.0,measured (run_metrics),18.195571114589985
+BRKGA,av_paulista,average_adult,51100.0,51100.0,51100.0,derived from code: 100 initial + 600 generations x 85 offspring,41.19231082957
+BRKGA,av_paulista,elderly,51100.0,51100.0,51100.0,derived from code: 100 initial + 600 generations x 85 offspring,31.096271087039973
+BRKGA,av_paulista,athlete,51100.0,51100.0,51100.0,derived from code: 100 initial + 600 generations x 85 offspring,52.48496979573999
+BRKGA,itajuba_centro,average_adult,51100.0,51100.0,51100.0,derived from code: 100 initial + 600 generations x 85 offspring,36.46022472543002
+BRKGA,itajuba_centro,elderly,51100.0,51100.0,51100.0,derived from code: 100 initial + 600 generations x 85 offspring,29.279912497049988
+BRKGA,itajuba_centro,athlete,51100.0,51100.0,51100.0,derived from code: 100 initial + 600 generations x 85 offspring,45.70771687432
+BRKGA,metro_ana_rosa,average_adult,51100.0,51100.0,51100.0,derived from code: 100 initial + 600 generations x 85 offspring,41.119782621930014
+BRKGA,metro_ana_rosa,elderly,51100.0,51100.0,51100.0,derived from code: 100 initial + 600 generations x 85 offspring,31.143118283100023
+BRKGA,metro_ana_rosa,athlete,51100.0,51100.0,51100.0,derived from code: 100 initial + 600 generations x 85 offspring,51.8953054139
+BRKGA,milao_italia,average_adult,51100.0,51100.0,51100.0,derived from code: 100 initial + 600 generations x 85 offspring,49.60774966161003
+BRKGA,milao_italia,elderly,51100.0,51100.0,51100.0,derived from code: 100 initial + 600 generations x 85 offspring,36.26716526735
+BRKGA,milao_italia,athlete,51100.0,51100.0,51100.0,derived from code: 100 initial + 600 generations x 85 offspring,65.92398587834002
+BRKGA,shinjuku_toquio,average_adult,51100.0,51100.0,51100.0,derived from code: 100 initial + 600 generations x 85 offspring,49.03039286439001
+BRKGA,shinjuku_toquio,elderly,51100.0,51100.0,51100.0,derived from code: 100 initial + 600 generations x 85 offspring,35.44325343094007
+BRKGA,shinjuku_toquio,athlete,51100.0,51100.0,51100.0,derived from code: 100 initial + 600 generations x 85 offspring,64.83889971793002
+PSO,av_paulista,average_adult,,30050.0,,lower bound from code: 50 initial + 600 x 50 moves; k-tournament evaluations not logged,59.98961299441
+PSO,av_paulista,elderly,,30050.0,,lower bound from code: 50 initial + 600 x 50 moves; k-tournament evaluations not logged,40.91636956183001
+PSO,av_paulista,athlete,,30050.0,,lower bound from code: 50 initial + 600 x 50 moves; k-tournament evaluations not logged,88.30036196606004
+PSO,itajuba_centro,average_adult,,30050.0,,lower bound from code: 50 initial + 600 x 50 moves; k-tournament evaluations not logged,58.78547201176001
+PSO,itajuba_centro,elderly,,30050.0,,lower bound from code: 50 initial + 600 x 50 moves; k-tournament evaluations not logged,39.99043152354999
+PSO,itajuba_centro,athlete,,30050.0,,lower bound from code: 50 initial + 600 x 50 moves; k-tournament evaluations not logged,83.72353116117
+PSO,metro_ana_rosa,average_adult,,30050.0,,lower bound from code: 50 initial + 600 x 50 moves; k-tournament evaluations not logged,62.168720711910005
+PSO,metro_ana_rosa,elderly,,30050.0,,lower bound from code: 50 initial + 600 x 50 moves; k-tournament evaluations not logged,39.95435261249997
+PSO,metro_ana_rosa,athlete,,30050.0,,lower bound from code: 50 initial + 600 x 50 moves; k-tournament evaluations not logged,91.10407937269002
+PSO,milao_italia,average_adult,,30050.0,,lower bound from code: 50 initial + 600 x 50 moves; k-tournament evaluations not logged,76.50537751620995
+PSO,milao_italia,elderly,,30050.0,,lower bound from code: 50 initial + 600 x 50 moves; k-tournament evaluations not logged,49.88163630884001
+PSO,milao_italia,athlete,,30050.0,,lower bound from code: 50 initial + 600 x 50 moves; k-tournament evaluations not logged,110.36597113782004
+PSO,shinjuku_toquio,average_adult,,30050.0,,lower bound from code: 50 initial + 600 x 50 moves; k-tournament evaluations not logged,77.92128165109999
+PSO,shinjuku_toquio,elderly,,30050.0,,lower bound from code: 50 initial + 600 x 50 moves; k-tournament evaluations not logged,51.31252349717999
+PSO,shinjuku_toquio,athlete,,30050.0,,lower bound from code: 50 initial + 600 x 50 moves; k-tournament evaluations not logged,109.50011865600004

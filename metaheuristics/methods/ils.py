@@ -45,6 +45,10 @@ class ILSRuntimeConfig:
     log_only_improvements: bool = False
     log_on_acceptance: bool = False
     seed_parallel_workers: int = 1
+    # Binary UFAP (Vicente et al., SBPO 2026, Eq. 7f): at most one NEW facility
+    # per (hexagon, dimension) pair. Set ILS_BINARY_ALLOCATION=0 to reproduce the
+    # earlier integer runs, where a pair could receive several new facilities.
+    binary_allocation: bool = True
 
 
 def _slugify(value: str) -> str:
@@ -87,9 +91,51 @@ def _build_experiment_directories(context: MetaheuristicContext) -> Dict[str, Pa
     }
 
 
-def _build_seed_initial_candidate_map(context: MetaheuristicContext) -> Dict[int, np.ndarray]:
+def _binary_random_initial_candidate(seed_value: int,
+                                     objective_state: ObjectiveStateND,
+                                     allowed_source_rows: np.ndarray,
+                                     budget: int) -> np.ndarray:
+    """Random binary initial solution: `budget` distinct (hexagon, dimension)
+    pairs drawn uniformly without replacement among the allowed source rows.
+    Uses its own random stream so it does not consume the search stream of
+    `np.random.default_rng(seed)`."""
+    n_hex = len(objective_state.h3_ids)
+    n_dims = len(objective_state.candidate_dimensions)
+    n_pairs = int(allowed_source_rows.size) * n_dims
+    if budget > n_pairs:
+        raise ValueError(f"Binary allocation needs budget <= {n_pairs} (allowed rows x dimensions); got {budget}.")
+    rng = np.random.default_rng([int(seed_value), 1])
+    flat = rng.choice(n_pairs, size=int(budget), replace=False)
+    candidate_matrix = np.zeros((n_hex, n_dims), dtype=np.float64)
+    candidate_matrix[allowed_source_rows[flat // n_dims], flat % n_dims] = 1.0
+    return candidate_matrix
+
+
+def _check_allocation_feasible(candidate_matrix: np.ndarray, budget: int,
+                               binary_allocation: bool, method: str) -> None:
+    """Always-on guard: total budget and, in binary mode, at most 1 per pair."""
+    total = float(candidate_matrix.sum())
+    if not np.isclose(total, float(budget), rtol=0.0, atol=1e-9):
+        raise ValueError(f"{method}: allocation uses {total} facilities, expected {budget}.")
+    if binary_allocation and float(candidate_matrix.max()) > 1.0 + 1e-9:
+        raise ValueError(f"{method}: binary mode violated (max per pair = {candidate_matrix.max()}).")
+
+
+def _build_seed_initial_candidate_map(context: MetaheuristicContext,
+                                      binary_allocation: bool = False) -> Dict[int, np.ndarray]:
     seed_to_candidate_matrix = {}
     if context.objective_state_nd is None:
+        return seed_to_candidate_matrix
+
+    if binary_allocation:
+        allowed_rows = _resolve_allowed_source_rows(context, context.objective_state_nd)
+        for seed_value in context.seeds:
+            seed_to_candidate_matrix[int(seed_value)] = _binary_random_initial_candidate(
+                seed_value=int(seed_value),
+                objective_state=context.objective_state_nd,
+                allowed_source_rows=allowed_rows,
+                budget=int(context.budget),
+            )
         return seed_to_candidate_matrix
 
     for allocation_record in context.allocations:
@@ -124,7 +170,8 @@ def _candidate_matrix_to_allocation_items(candidate_matrix: np.ndarray,
 def _sample_feasible_relocation_move(candidate_matrix: np.ndarray,
                                      random_generator: np.random.Generator,
                                      allowed_source_rows: np.ndarray,
-                                     preserve_dimension: bool = False) -> Optional[Tuple[int, int, int, int]]:
+                                     preserve_dimension: bool = False,
+                                     binary_allocation: bool = False) -> Optional[Tuple[int, int, int, int]]:
     if allowed_source_rows.size == 0:
         return None
 
@@ -142,6 +189,8 @@ def _sample_feasible_relocation_move(candidate_matrix: np.ndarray,
         target_col = int(source_col) if preserve_dimension else int(random_generator.integers(0, n_cols))
         if source_row == target_row and source_col == target_col:
             continue
+        if binary_allocation and candidate_matrix[target_row, target_col] >= 1.0:
+            continue  # target pair already has a new facility
         return int(source_row), int(source_col), target_row, target_col
     return None
 
@@ -179,7 +228,8 @@ def _apply_perturbation(candidate_matrix: np.ndarray,
                         random_generator: np.random.Generator,
                         perturbation_strength: int,
                         allowed_source_rows: np.ndarray,
-                        preserve_dimension: bool = False) -> int:
+                        preserve_dimension: bool = False,
+                        binary_allocation: bool = False) -> int:
     applied_moves = 0
     for _ in range(max(0, int(perturbation_strength))):
         relocation_move = _sample_feasible_relocation_move(
@@ -187,6 +237,7 @@ def _apply_perturbation(candidate_matrix: np.ndarray,
             random_generator=random_generator,
             allowed_source_rows=allowed_source_rows,
             preserve_dimension=preserve_dimension,
+            binary_allocation=binary_allocation,
         )
         if relocation_move is None:
             break
@@ -200,7 +251,8 @@ def _apply_dimension_preserving_block_perturbation(candidate_matrix: np.ndarray,
                                                     random_generator: np.random.Generator,
                                                     perturbation_strength: int,
                                                     allowed_source_rows: np.ndarray,
-                                                    block_size: int = 2) -> int:
+                                                    block_size: int = 2,
+                                                    binary_allocation: bool = False) -> int:
     n_blocks = max(0, int(perturbation_strength))
     block_moves = max(1, int(block_size))
     applied_moves = 0
@@ -217,6 +269,7 @@ def _apply_dimension_preserving_block_perturbation(candidate_matrix: np.ndarray,
                 random_generator=random_generator,
                 allowed_source_rows=allowed_source_rows,
                 preserve_dimension=True,
+                binary_allocation=binary_allocation,
             )
             if relocation_move is None:
                 break
@@ -251,7 +304,8 @@ def _run_local_search_first_improvement(candidate_matrix: np.ndarray,
                                         local_search_neighbor_sample: int,
                                         allowed_source_rows: np.ndarray,
                                         objective_epsilon: float,
-                                        preserve_dimension: bool = False) -> Dict[str, object]:
+                                        preserve_dimension: bool = False,
+                                        binary_allocation: bool = False) -> Dict[str, object]:
     total_evaluations = 0
     accepted_local_moves = 0
     local_search_steps = 0
@@ -273,6 +327,7 @@ def _run_local_search_first_improvement(candidate_matrix: np.ndarray,
                 random_generator=random_generator,
                 allowed_source_rows=allowed_source_rows,
                 preserve_dimension=preserve_dimension,
+                binary_allocation=binary_allocation,
             )
             if relocation_move is None:
                 break
@@ -657,6 +712,7 @@ def _run_single_seed_ils(seed_value: int,
     # s0 = GenerateInitialSolution
     # s* = LocalSearch(s0)
     current_candidate_matrix = np.asarray(initial_candidate_matrix, dtype=np.float64).copy()
+    _check_allocation_feasible(current_candidate_matrix, int(context.budget), config.binary_allocation, "ILS initial")
     all_rows = np.arange(current_candidate_matrix.shape[0], dtype=np.int32)
     outside_allowed_rows = np.setdiff1d(all_rows, allowed_source_rows, assume_unique=True)
     initial_eval_start = perf_counter()
@@ -693,6 +749,7 @@ def _run_single_seed_ils(seed_value: int,
         allowed_source_rows=allowed_source_rows,
         objective_epsilon=config.objective_epsilon,
         preserve_dimension=True,
+        binary_allocation=config.binary_allocation,
     )
     initial_local_search_elapsed = float(perf_counter() - initial_local_search_start)
     current_objective_value = float(initial_local_search_result["objective_value"])
@@ -796,6 +853,7 @@ def _run_single_seed_ils(seed_value: int,
                 perturbation_strength=perturb_strength_used,
                 allowed_source_rows=allowed_source_rows,
                 block_size=perturb_block_size,
+                binary_allocation=config.binary_allocation,
             )
         else:
             applied_perturbation_moves = _apply_perturbation(
@@ -804,6 +862,7 @@ def _run_single_seed_ils(seed_value: int,
                 perturbation_strength=perturb_strength_used,
                 allowed_source_rows=allowed_source_rows,
                 preserve_dimension=True,
+                binary_allocation=config.binary_allocation,
             )
         perturb_elapsed = float(perf_counter() - perturb_start)
         profiling_totals["iteration_perturbation_s"] += perturb_elapsed
@@ -843,6 +902,7 @@ def _run_single_seed_ils(seed_value: int,
             allowed_source_rows=allowed_source_rows,
             objective_epsilon=config.objective_epsilon,
             preserve_dimension=True,
+            binary_allocation=config.binary_allocation,
         )
         local_search_elapsed = float(perf_counter() - local_search_start)
         candidate_objective_value = float(local_search_result["objective_value"])
@@ -983,6 +1043,7 @@ def _run_single_seed_ils(seed_value: int,
         if not math.isclose(baseline_for_delta, 0.0):
             delta_pct_vs_baseline = float(100.0 * delta_abs_vs_baseline / baseline_for_delta)
 
+    _check_allocation_feasible(best_candidate_matrix, int(context.budget), config.binary_allocation, "ILS best")
     best_allocation_items = _candidate_matrix_to_allocation_items(
         candidate_matrix=best_candidate_matrix,
         objective_state=objective_state,
@@ -1050,10 +1111,11 @@ def run_ils(context: MetaheuristicContext) -> dict:
         log_only_improvements=os.getenv("ILS_LOG_ONLY_IMPROVEMENTS", "0") == "1",
         log_on_acceptance=os.getenv("ILS_LOG_ON_ACCEPTANCE", "0") == "1",
         seed_parallel_workers=seed_parallel_workers,
+        binary_allocation=os.getenv("ILS_BINARY_ALLOCATION", "1") != "0",
     )
     objective_state = context.objective_state_nd
 
-    seed_to_initial_candidate = _build_seed_initial_candidate_map(context)
+    seed_to_initial_candidate = _build_seed_initial_candidate_map(context, binary_allocation=config.binary_allocation)
     missing_initial_seeds = [seed for seed in context.seeds if int(seed) not in seed_to_initial_candidate]
     if missing_initial_seeds:
         return {

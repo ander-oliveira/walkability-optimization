@@ -1,0 +1,16 @@
+\begin{table*}[t]
+\centering
+\caption{Esforço computacional por execução. ILS e GRASP: avaliações medidas (média [mín.; máx.]); BRKGA: derivado do código ($100+600\times85$); PSO: limite inferior ($50+600\times50$), sem contar as avaliações do torneio, não registradas. Tempos: média por instância reportada pelos próprios scripts, em condições de execução distintas.}
+\label{tab:effort}
+\footnotesize
+\begin{tabular}{@{}llll@{}}
+\toprule
+Método & Avaliações por execução & Tempo médio por execução (s) & Critério de parada \\
+\midrule
+ILS & 29.155 [15.148; 30.472] & 59,7 [31,8; 102,6] & 30.000 aval., 500 it., 80 sem melhora \\
+GRASP & 9.561 [4.463; 24.772] & 21,3 [13,0; 32,3] & idem (encerrou por estagnação) \\
+BRKGA & 51.100 (fixo) & 44,1 [29,3; 65,9] & 600 gerações \\
+PSO & $\geq$ 30.050 & 69,4 [40,0; 110,4] & 600 iterações \\
+\bottomrule
+\end{tabular}
+\end{table*}

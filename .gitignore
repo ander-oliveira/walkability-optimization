@@ -12,3 +12,4 @@ docs/*.out
 docs/*.aux
 docs/*.pdf
 *.py[cod]
+Claude */

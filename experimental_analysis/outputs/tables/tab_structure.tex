@@ -1,0 +1,16 @@
+\begin{table*}[t]
+\centering
+\caption{Estrutura das alocações salvas como melhor solução (médias sobre as 15 instâncias). Máx. por célula = maior $\Delta x_{i,j}$; BRKGA e PSO só geram $\Delta x_{i,j}\in\{0,1\}$.}
+\label{tab:structure}
+\footnotesize
+\begin{tabular}{@{}lrrrrrr@{}}
+\toprule
+Método & Hexágonos & $q_{\max}$ & HHI & Máx. por célula & Menor $\sum\Delta x$ & Alocação salva = melhor execução \\
+\midrule
+ILS & 46,1 & 10,2 & 0,041 & 12 & 100 (0 inst.) & 15/15 \\
+GRASP & 58,8 & 6,3 & 0,033 & 24 & 100 (0 inst.) & 15/15 \\
+BRKGA & 82,7 & 2,7 & 0,014 & 1 & 100 (0 inst.) & 0/15 \\
+PSO & 86,3 & 2,3 & 0,013 & 1 & 97 (3 inst.) & 15/15 \\
+\bottomrule
+\end{tabular}
+\end{table*}

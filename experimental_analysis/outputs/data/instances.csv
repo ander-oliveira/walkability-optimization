@@ -1,0 +1,16 @@
+instance,location,profile,baseline,n_hex,n_impacts,bks,bks_algorithm,bks_seed
+av_paulista/athlete,av_paulista,athlete,54.0035,177,4998,63.8793,PSO,2937
+av_paulista/average_adult,av_paulista,average_adult,47.0577,177,2999,55.04600000000001,PSO,7987
+av_paulista/elderly,av_paulista,elderly,38.679199999999994,177,1328,46.243100000000005,GRASP,1845
+itajuba_centro/athlete,itajuba_centro,athlete,30.232800000000005,167,3843,56.241200000000006,PSO,8469
+itajuba_centro/average_adult,itajuba_centro,average_adult,25.412399999999998,167,2273,52.7303,PSO,2177
+itajuba_centro/elderly,itajuba_centro,elderly,22.7526,167,1077,46.6698,PSO,182
+metro_ana_rosa/athlete,metro_ana_rosa,athlete,42.5411,177,4904,58.217600000000004,PSO,2133
+metro_ana_rosa/average_adult,metro_ana_rosa,average_adult,38.5338,177,2935,51.4221,PSO,1149
+metro_ana_rosa/elderly,metro_ana_rosa,elderly,32.4469,177,1308,38.5436,PSO,6466
+milao_italia/athlete,milao_italia,athlete,62.9464,183,7119,66.2773,PSO,1845
+milao_italia/average_adult,milao_italia,average_adult,57.4485,183,4440,60.6801,GRASP,7110
+milao_italia/elderly,milao_italia,elderly,49.5489,183,2123,52.87769999999999,GRASP,6307
+shinjuku_toquio/athlete,shinjuku_toquio,athlete,57.096799999999995,194,6907,62.42829999999999,PSO,9723
+shinjuku_toquio/average_adult,shinjuku_toquio,average_adult,51.2712,194,4221,56.9511,PSO,1273
+shinjuku_toquio/elderly,shinjuku_toquio,elderly,42.2286,194,1980,47.9234,GRASP,4374

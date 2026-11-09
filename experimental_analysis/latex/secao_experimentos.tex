@@ -1,0 +1,351 @@
+% =====================================================================
+% Seções "Projeto Experimental", "Resultados" e "Ameaças à Validade"
+% geradas a partir de experimental_analysis/ (dados atuais de results/).
+%
+% Uso no artigo principal:
+%   \newcommand{\expdir}{experimental_analysis/outputs}   % ajuste o caminho
+%   \newcommand{\pendente}[1]{\textcolor{red}{[PENDENTE: #1]}}
+%   \input{experimental_analysis/latex/secao_experimentos.tex}
+%   \bibliography{references,experimental_analysis/latex/referencias_experimentos}
+% Requer os pacotes já usados no artigo (booktabs, graphicx, xcolor) e a
+% macro \IQC. Todos os números das tabelas vêm de outputs/tables/*.tex;
+% os números citados no texto foram copiados de outputs/tables/*.csv.
+% =====================================================================
+
+\section{Projeto Experimental}
+\label{sec:projeto}
+
+O experimento é relatado segundo o esquema de sete partes de Bartz-Beielstein e Preuss
+\cite{bartzbeielstein2010future}: questão de pesquisa, planejamento pré-experimental, tarefa,
+configuração, resultados, observações e discussão. As decisões de análise seguem
+\cite{derrac2011practical,eiben2011parameter,beiranvand2017best,chiarandini2010mixed}.
+
+\subsection{Questões de pesquisa e hipóteses}
+
+\begin{itemize}
+\item \textbf{QP1.} Há diferença no valor final de $\overline{\IQC}_f$ entre ILS, GRASP, BRKGA e PSO
+no conjunto de instâncias? $H_0$: os métodos têm desempenho mediano igual (teste de Friedman e
+derivados \cite[Sec.~4.2]{derrac2011practical}).
+\item \textbf{QP2.} Quão robustos são os métodos às sementes aleatórias e às instâncias
+\cite[Sec.~4.2]{eiben2011parameter}?
+\item \textbf{QP3.} Com o mesmo número de avaliações da função objetivo, ILS e GRASP diferem?
+(comparação de custo fixo \cite[Sec.~4.3]{beiranvand2017best}).
+\item \textbf{QP4.} Que estrutura espacial têm as melhores alocações de cada método?
+\end{itemize}
+
+\subsection{Instâncias}
+
+Cada instância combina uma localidade e um perfil de pedestre (Tabela~\ref{tab:instances}):
+cinco localidades (Av. Paulista, Ana Rosa, Itajubá, Milão e Shinjuku) e três perfis (atleta,
+adulto e idoso), num total de $15$ instâncias reais. Não há ótimo conhecido; a qualidade é medida
+em relação à melhor solução conhecida (BKS), definida por instância como o maior
+$\overline{\IQC}_f$ obtido por qualquer execução de qualquer método \cite[Sec.~4.3]{beiranvand2017best}.
+
+\input{\expdir/tables/tab_instances.tex}
+
+\subsection{Métodos, parâmetros e esforço computacional}
+
+Os quatro métodos usam a mesma função objetivo, o mesmo orçamento de $B=100$ POIs e as mesmas
+$100$ sementes (\texttt{seeds.txt}). Os parâmetros do ILS e do GRASP são os registrados nos arquivos de configuração
+das execuções (idênticos nas $15$ instâncias); os do BRKGA e do PSO são os valores padrão das funções
+\texttt{run\_brkga} e \texttt{run\_pso} \pendente{confirmar que as execuções usaram esses valores}:
+ILS com $30.000$ avaliações, $500$ iterações e $80$ iterações sem melhora como limites,
+busca local por primeira melhora com $64$ vizinhos amostrados e $25$ passos, perturbação por blocos
+que preserva a dimensão (bloco $2$, força inicial $5$, adaptativa) e aceitação \texttt{Better};
+GRASP com os mesmos limites e a mesma busca local, $\alpha\sim U[0,1]$ por iteração;
+BRKGA com população $100$, $600$ gerações, elite $15\%$, mutantes $10\%$ e herança $0{,}5$;
+PSO baseado em conjuntos com $50$ partículas, $600$ iterações, $c_1=0{,}9297$, $c_2=0{,}2266$,
+$c_3=1{,}3086$, $c_4=2{,}1526$ e torneio $k=7$.
+\pendente{descrever como cada conjunto de parâmetros foi escolhido (método de ajuste, instâncias de
+treino, orçamento de ajuste), conforme \cite[Sec.~4.4]{beiranvand2017best} e
+\cite[Sec.~2.6.3]{bartzbeielstein2010future}.}
+
+A Tabela~\ref{tab:effort} registra o esforço por execução. As avaliações do ILS e do GRASP foram
+medidas; as do BRKGA foram derivadas do código ($100$ indivíduos iniciais mais $600$ gerações de
+$85$ descendentes); para o PSO, $50+600\times50$ é um limite inferior, pois as avaliações feitas na
+seleção por torneio não são registradas. Os tempos são médias por instância reportadas pelos
+próprios scripts e foram obtidos em sessões e cargas de máquina diferentes
+\pendente{informar processador, núcleos, memória, sistema operacional, versão do Python e das
+bibliotecas, e o número de execuções simultâneas de cada método}.
+
+\input{\expdir/tables/tab_effort.tex}
+
+\subsection{Medidas de desempenho}
+
+Para cada execução registra-se o melhor $\overline{\IQC}_f$. A medida principal de comparação é o
+desvio percentual relativo à BKS,
+\begin{equation}
+\mathrm{RPD} = 100\,\frac{\mathrm{BKS}-\overline{\IQC}_f}{\mathrm{BKS}},
+\end{equation}
+que coloca as instâncias numa escala comum (menor é melhor). Também são reportados média, mediana,
+desvio padrão, mínimo e máximo por instância, o número de avaliações e o tempo de execução.
+
+\subsection{Procedimento de análise estatística}
+
+\paragraph{Comparação entre instâncias (QP1).} A unidade de análise é a instância, com um valor por par
+método--instância (o RPD médio das $100$ execuções) \cite[Sec.~6.1]{derrac2011practical}. Com $n=15$
+instâncias e $k=4$ métodos, a condição $n\geq 2k$ é satisfeita e $n$ fica abaixo de $8k$
+\cite[Sec.~6.1]{derrac2011practical}. Aplicam-se os testes de Friedman (com a extensão de
+Iman--Davenport), Friedman Aligned Ranks e Quade; rejeitada a igualdade, faz-se a comparação
+$1\times N$ com o método de menor ranking como controle e valores de $p$ ajustados por Holm, Hochberg,
+Finner e Li, e a comparação $N\times N$ com os procedimentos de Shaffer e Bergmann--Hommel
+\cite[Secs.~4.3, 5 e 6.3]{derrac2011practical}. A estimação de contraste baseada em medianas quantifica
+a diferença entre os métodos \cite[Sec.~4.4]{derrac2011practical}. Os testes do sinal e de Wilcoxon
+sobre as instâncias são reportados como complemento, com ajuste de Holm, pois testes pareados isolados
+não controlam a taxa de erro da família \cite[Sec.~4]{derrac2011practical}. Como análise de
+sensibilidade, repete-se o procedimento com a mediana por instância e com uma observação por localidade.
+
+\paragraph{Comparação por instância.} Em cada instância, as $100$ execuções de cada método formam uma
+amostra. As sementes não definem um ponto de partida comum aos quatro métodos (apenas o ILS parte da
+alocação aleatória gerada pela semente), de modo que as amostras são tratadas como independentes:
+teste de Kruskal--Wallis por instância e teste de Mann--Whitney para cada par, com ajuste de Holm sobre
+os $90$ testes; o tamanho do efeito é a correlação bisserial de postos $r_{rb}$ e o intervalo de
+confiança de $95\%$ da diferença de medianas é obtido por \textit{bootstrap} ($2.000$ reamostragens).
+
+\paragraph{Modelo misto.} Como análise complementar, ajusta-se o modelo de efeitos mistos
+$Y_{ijk}=\mu+\alpha_j+\tau_i+\gamma_{ij}+\varepsilon_{ijk}$, com método ($\alpha_j$) fixo, instância
+($\tau_i$) e interação ($\gamma_{ij}$) aleatórias e $100$ réplicas, sobre o RPD; o efeito de método é
+testado contra a interação e os contrastes usam o procedimento de Tukey
+\cite[Sec.~10.2.2]{chiarandini2010mixed}.
+
+\paragraph{Robustez (QP2).} Robustez às sementes: desvio padrão, amplitude entre a melhor e a pior
+execução e taxa de sucesso (fração de execuções com RPD abaixo de um limiar); robustez às instâncias:
+falibilidade (amplitude do RPD médio entre instâncias) e aplicabilidade (número de instâncias com RPD
+médio abaixo do limiar) \cite[Sec.~4.2]{eiben2011parameter}.
+
+\paragraph{Custo fixo e tempo até o alvo (QP3).} As trajetórias registradas do ILS e do GRASP permitem
+obter o melhor valor de cada execução após $E$ avaliações e comparar os dois métodos com o mesmo
+esforço \cite[Secs.~4.3 e 4.4]{beiranvand2017best}. Para cada instância define-se um alvo igual ao
+menor primeiro quartil dos valores finais dos dois métodos; o número de avaliações até o alvo alimenta
+os gráficos tempo-até-alvo \cite{aiex2005tttplots} e os perfis de desempenho
+\cite[Sec.~5]{beiranvand2017best}. Execuções que terminaram sem atingir o alvo contam como falhas.
+O BRKGA e o PSO não registram trajetórias e ficam fora desta análise.
+
+Em todos os testes adota-se $\alpha=0{,}05$. O código e os dados de todas as tabelas e figuras estão em
+\texttt{experimental\_analysis/}; a implementação dos testes foi verificada contra os exemplos
+numéricos de \cite{derrac2011practical}.
+
+% ---------------------------------------------------------------------
+\section{Resultados}
+\label{sec:resultados}
+
+\subsection{Qualidade final das soluções}
+
+A Tabela~\ref{tab:descriptive} apresenta o valor final por instância. O PSO obteve a maior média em
+$14$ das $15$ instâncias; a exceção é Milão/idoso, em que o GRASP obteve a maior média. A BKS foi
+obtida pelo PSO em $11$ instâncias e pelo GRASP em $4$ (Tabela~\ref{tab:instances}). A
+Fig.~\ref{fig:box} mostra a distribuição do RPD por instância e a Fig.~\ref{fig:ecdf}, a distribuição
+empírica acumulada sobre as $1.500$ execuções de cada método: a mediana do RPD é menor no PSO, seguido
+de GRASP e BRKGA, e maior no ILS.
+
+\input{\expdir/tables/tab_descriptive.tex}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{\expdir/figures/box_rpd_instances.pdf}
+\caption{RPD em relação à BKS por instância (100 execuções por método). Escalas verticais distintas por painel.}
+\label{fig:box}
+\end{figure*}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{\expdir/figures/ecdf_rpd.pdf}
+\caption{Distribuição empírica acumulada do RPD sobre todas as execuções; os marcadores indicam a mediana.}
+\label{fig:ecdf}
+\end{figure}
+
+\subsection{Comparação entre instâncias}
+
+Os três testes omnibus rejeitam a hipótese de desempenho igual (Tabela~\ref{tab:omnibus}):
+Friedman $\chi^2_F=33{,}08$ ($p=3{,}1\times10^{-7}$), Iman--Davenport $F_{ID}=38{,}85$
+($p=3{,}5\times10^{-12}$), Friedman Aligned $29{,}46$ ($p=1{,}8\times10^{-6}$) e Quade $F_Q=19{,}34$
+($p=5{,}0\times10^{-8}$). Os rankings médios de Friedman são $1{,}07$ (PSO), $2{,}40$ (BRKGA),
+$2{,}80$ (GRASP) e $3{,}73$ (ILS) (Fig.~\ref{fig:ranks}).
+
+\input{\expdir/tables/tab_omnibus.tex}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{\expdir/figures/friedman_ranks_cd.pdf}
+\caption{Rankings médios de Friedman. A faixa cinza marca a diferença crítica de Bonferroni--Dunn
+($\alpha=0{,}05$) a partir do melhor ranking.}
+\label{fig:ranks}
+\end{figure}
+
+Na comparação $1\times N$ com o PSO como controle (Tabela~\ref{tab:posthoc1xn}), as diferenças para
+ILS e GRASP são significativas em todos os rankings e procedimentos de ajuste. Para o BRKGA, os valores
+de $p$ ajustados são $0{,}0047$ (Friedman), $0{,}019$ (Aligned) e $0{,}046$ (Quade) em Holm, Hochberg,
+Finner e Li. Na comparação $N\times N$ (Tabela~\ref{tab:posthocnxn}), Shaffer e Bergmann confirmam
+PSO $>$ ILS, PSO $>$ GRASP, PSO $>$ BRKGA e BRKGA $>$ ILS ($p\leq0{,}014$). A hipótese GRASP $=$ ILS
+tem $p$ ajustado $0{,}095$ em Holm e Shaffer e $0{,}048$ em Bergmann; GRASP $=$ BRKGA não é rejeitada
+($p=0{,}40$). No teste de Wilcoxon sobre as instâncias (Tabela~\ref{tab:pairwise}), o GRASP supera o
+ILS em $11$ das $15$ instâncias, sem significância ($p=0{,}23$; Holm $0{,}46$). A estimação de
+contraste (Tabela~\ref{tab:contrast}) indica que o PSO tem RPD menor que BRKGA, GRASP e ILS em
+$3{,}1$, $3{,}7$ e $6{,}4$ pontos percentuais, respectivamente.
+
+\input{\expdir/tables/tab_posthoc_1xN.tex}
+\input{\expdir/tables/tab_posthoc_NxN.tex}
+\input{\expdir/tables/tab_pairwise_instances.tex}
+\input{\expdir/tables/tab_contrast.tex}
+
+As análises de sensibilidade levam à mesma ordenação. Com a mediana por instância, as decisões de
+Shaffer são as mesmas; em Bergmann, o valor de $p$ ajustado de GRASP $=$ ILS passa de $0{,}048$ para
+$0{,}066$ (Shaffer $0{,}13$). Com uma observação por
+localidade ($n=5$), Friedman, Aligned e Quade rejeitam a igualdade ($p=0{,}007$, $0{,}014$ e $0{,}004$),
+mas $n=5$ fica abaixo de $n\geq2k=8$ \cite[Sec.~6.1]{derrac2011practical}, e esse resultado é apenas
+indicativo.
+
+\subsection{Comparação por instância}
+
+Em todas as $15$ instâncias o teste de Kruskal--Wallis rejeita a igualdade e todos os $90$ testes de
+Mann--Whitney são significativos após Holm (Tabela~\ref{tab:singleproblem}), com $|r_{rb}|$ mediano entre
+$0{,}98$ e $1{,}00$ por par. Na comparação ILS $\times$ GRASP, o ILS é melhor nas três instâncias de
+Itajubá (diferença de medianas de $+2{,}0$ a $+5{,}2$) e em Milão/atleta ($+0{,}17$; IC $95\%$
+$[0{,}10; 0{,}24]$), e o GRASP nas demais $11$. Com $100$ réplicas por método, diferenças pequenas em
+valor absoluto tornam-se significativas; a magnitude deve ser lida na diferença de medianas e no seu
+intervalo de confiança \cite[Secs.~1.4 e 2.5.6]{bartzbeielstein2010experimental}.
+
+\input{\expdir/tables/tab_single_problem_summary.tex}
+
+\subsection{Modelo de efeitos mistos}
+
+No modelo misto (Tabela~\ref{tab:mixedanova}), o efeito de método é significativo
+($F_{3,42}=11{,}63$, $p=1{,}1\times10^{-5}$). As componentes de variância estimadas são $23{,}05$
+(instância), $15{,}67$ (interação método $\times$ instância) e $1{,}04$ (réplicas): a variação entre
+execuções é pequena diante da variação entre instâncias e da interação. Se as instâncias fossem tratadas
+como fator fixo, a estatística do efeito de método seria $F=17.544$, ilustrando a diferença de inferência
+apontada em \cite[Sec.~10.5]{chiarandini2010mixed}. Os intervalos de Tukey (Fig.~\ref{fig:tukey})
+indicam diferença entre PSO e ILS ($7{,}8$ p.p.), PSO e GRASP ($6{,}7$ p.p.) e BRKGA e ILS ($4{,}2$ p.p.);
+os intervalos para PSO $\times$ BRKGA ($[-0{,}27; 7{,}47]$), GRASP $\times$ BRKGA e ILS $\times$ GRASP
+contêm o zero. Os resíduos têm curtose em excesso de $7{,}6$ (gráfico quantil--quantil em
+\texttt{mixed\_qq.pdf}, material suplementar), o que afasta a suposição de normalidade; por isso o modelo misto é usado como análise
+exploratória complementar e a inferência principal é a não paramétrica
+\cite[Sec.~10.1]{chiarandini2010mixed}.
+
+\input{\expdir/tables/tab_mixed_anova.tex}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{\expdir/figures/mixed_tukey.pdf}
+\caption{Gráfico de comparações pareadas de Tukey no modelo misto: intervalos que se sobrepõem indicam
+diferença não significativa ($95\%$).}
+\label{fig:tukey}
+\end{figure}
+
+\subsection{Robustez}
+
+A Tabela~\ref{tab:robustness} resume a robustez. Às sementes, o PSO tem o menor desvio padrão mediano
+($0{,}14$) e a menor amplitude mediana ($0{,}74$); o GRASP, os maiores ($0{,}38$ e $2{,}13$). A taxa de
+execuções com RPD $\le 2\%$ é de $77{,}7\%$ no PSO, $21{,}5\%$ no GRASP, $16{,}5\%$ no BRKGA e $9{,}5\%$
+no ILS. Às instâncias, a falibilidade é de $5{,}0$ p.p. no PSO, $10{,}5$ no BRKGA, $23{,}4$ no ILS e
+$28{,}8$ no GRASP. As instâncias de Itajubá concentram os maiores RPD médios em todos os métodos;
+no ILS, Ana Rosa/atleta e Ana Rosa/adulto superam Itajubá/atleta (Fig.~\ref{fig:heatmap}). A Fig.~\ref{fig:interaction} mostra o RPD médio por perfil de pedestre.
+
+\input{\expdir/tables/tab_robustness.tex}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{\expdir/figures/heatmap_rpd.pdf}
+\caption{RPD médio por instância e método.}
+\label{fig:heatmap}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{\expdir/figures/interaction_profile.pdf}
+\caption{RPD médio por perfil de pedestre e método (média sobre localidades e sementes).}
+\label{fig:interaction}
+\end{figure}
+
+\subsection{ILS e GRASP com o mesmo número de avaliações}
+
+A Tabela~\ref{tab:fixedbudget} compara ILS e GRASP pelo melhor valor obtido até $E$ avaliações. Até
+$4.463$ avaliações, nenhuma execução do GRASP havia terminado. Em todos os orçamentos, o GRASP tem o
+menor RPD médio e é significativamente melhor em $11$ ou $12$ instâncias, contra $2$ a $4$ do ILS
+(Mann--Whitney com Holm). Sobre as $15$ instâncias, a diferença é significativa no teste de Wilcoxon até
+$2.000$ avaliações ($p=0{,}048$) e deixa de ser a partir de $3.000$ ($p=0{,}073$). A
+Fig.~\ref{fig:convergence} mostra a mediana e o intervalo interquartil do melhor valor ao longo das
+avaliações: nas três instâncias de Itajubá e em Milão/atleta, as curvas do ILS ultrapassam as do GRASP
+antes ou depois do encerramento deste.
+
+\input{\expdir/tables/tab_fixed_budget.tex}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{\expdir/figures/convergence_ils_grasp.pdf}
+\caption{Melhor $\overline{\IQC}_f$ ao longo das avaliações (mediana e intervalo interquartil de 100 execuções).
+A linha tracejada marca a primeira parada do GRASP por estagnação; depois dela, execuções encerradas
+mantêm o valor final.}
+\label{fig:convergence}
+\end{figure*}
+
+Nos gráficos tempo-até-alvo (Fig.~\ref{fig:ttt}) e nos perfis de desempenho (Fig.~\ref{fig:profile}),
+o GRASP atinge o alvo com menos avaliações em $12$ das $15$ instâncias ($\rho(1)=0{,}80$) e o ILS em $3$
+($\rho(1)=0{,}20$); com tempo em segundos, a leitura é a mesma.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{\expdir/figures/ttt_ils_grasp.pdf}
+\caption{Gráficos tempo-até-alvo em três instâncias, com $P_i=(i-0{,}5)/n$ sobre as $n=100$ execuções;
+a legenda indica quantas execuções atingiram o alvo.}
+\label{fig:ttt}
+\end{figure*}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{\expdir/figures/performance_profile_ils_grasp.pdf}
+\caption{Perfis de desempenho de ILS e GRASP sobre a mediana do esforço até o alvo nas 15 instâncias
+(avaliações à esquerda, segundos à direita).}
+\label{fig:profile}
+\end{figure*}
+
+\subsection{Esforço e estrutura das soluções}
+
+A Fig.~\ref{fig:tradeoff} relaciona o RPD médio ao tempo médio reportado por instância. A
+Tabela~\ref{tab:structure} resume a estrutura das alocações salvas como melhor solução: BRKGA e PSO
+geram apenas $\Delta x_{i,j}\in\{0,1\}$ e usam em média $82{,}7$ e $86{,}3$ hexágonos, contra $58{,}8$
+(GRASP) e $46{,}1$ (ILS). Em três instâncias, a melhor alocação do PSO soma $97$ ou $99$ POIs.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{\expdir/figures/tradeoff_quality_time.pdf}
+\caption{RPD médio versus tempo médio por execução reportado, por instância e método.}
+\label{fig:tradeoff}
+\end{figure}
+
+\input{\expdir/tables/tab_structure.tex}
+
+% ---------------------------------------------------------------------
+\section{Ameaças à Validade}
+\label{sec:ameacas}
+
+\begin{enumerate}
+\item \textbf{Esforço computacional desigual.} Os métodos encerraram por critérios diferentes e com
+números de avaliações diferentes (Tabela~\ref{tab:effort}). Comparações justas exigem as mesmas
+condições de parada \cite[Sec.~4.4]{beiranvand2017best} ou o mesmo tempo de relógio. A comparação de
+custo fixo foi possível apenas entre ILS e GRASP; para BRKGA e PSO, as diferenças de qualidade podem
+refletir parcialmente o esforço maior.
+\item \textbf{Espaços de solução diferentes.} BRKGA e PSO restringem $\Delta x_{i,j}$ a $\{0,1\}$, e o PSO
+aceita soluções com menos de $B$ POIs, enquanto ILS e GRASP resolvem a formulação inteira com
+$\sum\Delta x_{i,j}=B$. A BKS de três instâncias vem de alocações do PSO com $97$ ou $99$ POIs. A
+comparação de métodos que abordam o problema sob formulações diferentes deve ser lida com essa
+ressalva \cite[Sec.~7]{beiranvand2017best}.
+\item \textbf{Ajuste de parâmetros.} Comparar métodos ajustados com métodos não ajustados não é justo
+\cite[Sec.~2.6.3]{bartzbeielstein2010future}; o esforço de ajuste deve ser o mesmo para todos
+\cite[Sec.~8]{eiben2011parameter}. \pendente{documentar o procedimento de ajuste de cada método.}
+\item \textbf{Número e independência das instâncias.} Com menos de $20$ problemas, o estudo
+caracteriza-se como estudo de caso \cite[Sec.~3]{beiranvand2017best}. As $15$ instâncias derivam de
+$5$ localidades; os três perfis de uma localidade compartilham a malha urbana, e a análise por
+localidade fica abaixo do tamanho mínimo recomendado \cite[Sec.~6.1]{derrac2011practical}.
+\item \textbf{Medição de tempo.} Os tempos vêm de sessões diferentes e com níveis de paralelismo
+diferentes (por exemplo, as mesmas $100$ execuções do PSO em Av.~Paulista registraram médias de $60$ s
+e de $218$ s em duas sessões, com valores finais idênticos). Por isso, o tempo é tratado como
+informação descritiva \cite[Sec.~4.1]{beiranvand2017best}.
+\item \textbf{Registro dos resultados.} O BRKGA salvou como melhor alocação a execução da primeira
+semente, não a melhor das $100$; a Tabela~\ref{tab:structure} reflete essa alocação. O BRKGA e o PSO não
+registram trajetórias nem tempo por execução.
+\item \textbf{Significância e relevância.} Com $100$ réplicas, todas as diferenças por instância são
+estatisticamente significativas; a relevância prática depende de uma diferença mínima de interesse
+definida a priori \cite[Secs.~1.4 e 2.5.6]{bartzbeielstein2010experimental}.
+\pendente{definir a diferença mínima de interesse em $\overline{\IQC}_f$ ou em RPD.}
+\end{enumerate}

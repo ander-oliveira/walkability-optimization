@@ -1,0 +1,38 @@
+runs per algorithm: {'BRKGA': 1500, 'GRASP': 1500, 'ILS': 1500, 'PSO': 1500}
+instances: 15, seeds: 100
+[PSO] av_paulista/objectives.txt block #3 (average_adult): identical to the first block (re-execution reproduced the values); ignored
+[PSO] av_paulista/objectives.txt block #4 (elderly): identical to the first block (re-execution reproduced the values); ignored
+[PSO] av_paulista/objectives.txt block #5 (athlete): identical to the first block (re-execution reproduced the values); ignored
+[PSO] av_paulista/objectives.txt block #6 (average_adult): identical to the first block (re-execution reproduced the values); ignored
+[PSO] av_paulista/objectives.txt block #7 (elderly): identical to the first block (re-execution reproduced the values); ignored
+[PSO] av_paulista/objectives.txt block #8 (athlete): identical to the first block (re-execution reproduced the values); ignored
+[PSO] av_paulista/objectives.txt block #9 (average_adult): equal to metro_ana_rosa/average_adult (appended here by the hard-coded output path); ignored
+[PSO] av_paulista/objectives.txt block #10 (elderly): equal to metro_ana_rosa/elderly (appended here by the hard-coded output path); ignored
+[PSO] av_paulista/objectives.txt block #11 (athlete): equal to metro_ana_rosa/athlete (appended here by the hard-coded output path); ignored
+[PSO] av_paulista/objectives.txt block #12 (average_adult): equal to itajuba_centro/average_adult (appended here by the hard-coded output path); ignored
+[PSO] av_paulista/objectives.txt block #13 (elderly): equal to itajuba_centro/elderly (appended here by the hard-coded output path); ignored
+[PSO] av_paulista/objectives.txt block #14 (athlete): equal to itajuba_centro/athlete (appended here by the hard-coded output path); ignored
+[PSO] av_paulista/objectives.txt block #15 (average_adult): equal to milao_italia/average_adult (appended here by the hard-coded output path); ignored
+[PSO] av_paulista/objectives.txt block #16 (elderly): equal to milao_italia/elderly (appended here by the hard-coded output path); ignored
+[PSO] av_paulista/objectives.txt block #17 (athlete): equal to milao_italia/athlete (appended here by the hard-coded output path); ignored
+[PSO] av_paulista/objectives.txt block #18 (average_adult): equal to shinjuku_toquio/average_adult (appended here by the hard-coded output path); ignored
+[PSO] av_paulista/objectives.txt block #19 (elderly): equal to shinjuku_toquio/elderly (appended here by the hard-coded output path); ignored
+[PSO] av_paulista/objectives.txt block #20 (athlete): equal to shinjuku_toquio/athlete (appended here by the hard-coded output path); ignored
+[BRKGA] av_paulista/athlete: stored allocation (61.2636) is not the best run (61.8532)
+[BRKGA] av_paulista/average_adult: stored allocation (53.0048) is not the best run (53.2665)
+[BRKGA] av_paulista/elderly: stored allocation (43.3969) is not the best run (44.2213)
+[BRKGA] itajuba_centro/athlete: stored allocation (51.9302) is not the best run (53.3823)
+[BRKGA] itajuba_centro/average_adult: stored allocation (47.1531) is not the best run (48.9434)
+[BRKGA] itajuba_centro/elderly: stored allocation (40.2673) is not the best run (43.6485)
+[BRKGA] metro_ana_rosa/athlete: stored allocation (55.4914) is not the best run (55.6198)
+[BRKGA] metro_ana_rosa/average_adult: stored allocation (46.9479) is not the best run (48.1233)
+[BRKGA] metro_ana_rosa/elderly: stored allocation (37.2432) is not the best run (37.6332)
+[BRKGA] milao_italia/athlete: stored allocation (65.6554) is not the best run (65.7486)
+[BRKGA] milao_italia/average_adult: stored allocation (59.9431) is not the best run (60.0483)
+[BRKGA] milao_italia/elderly: stored allocation (51.6601) is not the best run (51.9149)
+[BRKGA] shinjuku_toquio/athlete: stored allocation (61.0753) is not the best run (61.6319)
+[BRKGA] shinjuku_toquio/average_adult: stored allocation (54.9964) is not the best run (55.8946)
+[BRKGA] shinjuku_toquio/elderly: stored allocation (45.5350) is not the best run (46.4678)
+[PSO] av_paulista/average_adult: stored best allocation has 99 POIs (budget B = 100)
+[PSO] itajuba_centro/average_adult: stored best allocation has 97 POIs (budget B = 100)
+[PSO] shinjuku_toquio/elderly: stored best allocation has 99 POIs (budget B = 100)

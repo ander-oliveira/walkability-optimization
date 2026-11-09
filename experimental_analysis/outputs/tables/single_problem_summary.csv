@@ -1,0 +1,7 @@
+A,B,A_better,no_difference,B_better,median_abs_r_rb
+ILS,GRASP,4,0,11,0.998
+ILS,BRKGA,0,0,15,1.0
+ILS,PSO,0,0,15,1.0
+GRASP,BRKGA,5,0,10,0.9778
+GRASP,PSO,1,0,14,1.0
+BRKGA,PSO,0,0,15,1.0
